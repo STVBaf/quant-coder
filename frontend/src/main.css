@@ -1,3 +1,7 @@
+/* Declare layer order so PrimeVue's `primevue` layer sits under Tailwind
+   utilities — our utility classes win over component defaults where they meet. */
+@layer theme, base, primevue, tailwind-utilities;
+
 @import "tailwindcss";
 
 /* OKX / Web3 dark financial design tokens.

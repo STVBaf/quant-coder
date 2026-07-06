@@ -7,3 +7,6 @@ anthropic
 python-dotenv
 psycopg>=3.1
 psycopg-binary>=3.1
+mootdx
+claude-agent-sdk
+pyarrow

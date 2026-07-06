@@ -13,6 +13,7 @@ const code = ref("");
 const links = [
   { to: "/", label: "大盘看板" },
   { to: "/workspace", label: "量化工作台" },
+  { to: "/research", label: "研究 Agent" },
   { to: "/history", label: "回测历史" },
 ];
 

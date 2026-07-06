@@ -62,4 +62,10 @@ export const removeWatch = (code) =>
 export const sendChat = (payload) =>
   api.post("/agent/chat/", payload).then((r) => r.data);
 
+export const createResearch = (payload) =>
+  api.post("/agent/research/", payload).then((r) => r.data);
+
+export const getResearch = (id) =>
+  api.get(`/agent/research/${id}/`).then((r) => r.data);
+
 export default api;
