@@ -1,0 +1,27 @@
+# PostgreSQL for the quant platform (development).
+# Usage:
+#   docker compose up -d          # start
+#   docker compose down           # stop (keeps data in the named volume)
+#   docker compose down -v        # stop and wipe data
+# Credentials here match backend/.env.example — copy those into backend/.env.
+services:
+  db:
+    image: postgres:16
+    container_name: quant-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: quant
+      POSTGRES_USER: quant
+      POSTGRES_PASSWORD: quant_dev_pw
+    ports:
+      - "5432:5432"
+    volumes:
+      - quant_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quant -d quant"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  quant_pgdata:

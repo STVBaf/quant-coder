@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/* OKX / Web3 dark financial design tokens.
+   红涨绿跌 (A-share convention): up = red, down = green. */
+@theme {
+  --color-bg: #0b0e11;
+  --color-panel: #181a20;
+  --color-hover: #2b3139;
+  --color-line: #2b3139;
+  --color-fg: #eaecef;
+  --color-fg-strong: #fafafa;
+  --color-fg-dim: #848e9c;
+  --color-up: #f6465d;
+  --color-down: #0ecb81;
+  --color-brand: #007aff;
+  --color-ai: #8a2be2;
+
+  --font-mono: "JetBrains Mono", "DIN Pro", ui-monospace, monospace;
+  --font-sans: "Inter", -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+}
+
+@layer base {
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+  }
+  * {
+    box-sizing: border-box;
+  }
+  /* Mono digits for financial data */
+  .nums {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Hide native number spinners */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-hover);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-fg-dim);
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+}
+
+/* Reusable panel atom */
+@utility card {
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: 0.75rem;
+}
+
+/* Glassmorphism trace panel */
+@utility glass {
+  background: rgba(43, 49, 57, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+/* ── Geek dashboard FX ─────────────────────────────────────────── */
+
+/* Animated tech grid + radial brand glow, used as a full-bleed backdrop. */
+@utility fx-grid {
+  background-image:
+    linear-gradient(rgba(0, 122, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 122, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+@utility fx-glow {
+  background:
+    radial-gradient(60% 50% at 15% 0%, rgba(0, 122, 255, 0.12), transparent 70%),
+    radial-gradient(50% 50% at 90% 10%, rgba(138, 43, 226, 0.1), transparent 70%);
+}
+
+/* Neon outline that breathes — for the headline index cards on hover. */
+@utility card-glow {
+  position: relative;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.card-glow:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 122, 255, 0.5);
+  box-shadow: 0 0 0 1px rgba(0, 122, 255, 0.3), 0 8px 30px rgba(0, 122, 255, 0.15);
+}
+
+@keyframes fx-scan {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(2000%); opacity: 0; }
+}
+/* A faint horizontal beam sweeping down the panel — CRT/terminal vibe. */
+.fx-scanline::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 122, 255, 0.6), transparent);
+  animation: fx-scan 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes fx-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+/* Ticker tape: duplicate the content and translate -50% for a seamless loop. */
+.fx-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: fx-marquee 40s linear infinite;
+}
+.fx-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes fx-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Staggered entrance for cards; pair with an inline --d delay. */
+.fx-rise {
+  opacity: 0;
+  animation: fx-rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes fx-flash-up {
+  0% { background-color: rgba(246, 70, 93, 0); }
+  30% { background-color: rgba(246, 70, 93, 0.18); }
+  100% { background-color: rgba(246, 70, 93, 0); }
+}
+@keyframes fx-flash-down {
+  0% { background-color: rgba(14, 203, 129, 0); }
+  30% { background-color: rgba(14, 203, 129, 0.18); }
+  100% { background-color: rgba(14, 203, 129, 0); }
+}
+/* Tick flash on price change — driven by toggling a class from JS. */
+.fx-up { animation: fx-flash-up 0.6s ease-out; }
+.fx-down { animation: fx-flash-down 0.6s ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-marquee, .fx-scanline::after, .fx-rise, .fx-up, .fx-down {
+    animation: none;
+  }
+  .fx-rise { opacity: 1; }
+}

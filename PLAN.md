@@ -65,20 +65,21 @@ Vue 前端  ──HTTP/JSON──>  Django + DRF
 - 验收：选股选策略调参，能跑出收益曲线和指标 ✅（茅台布林带 2023-24 +21.6%/夏普0.78）
 
 ### M4 — 用户系统与历史
-- [ ] 用户注册 / 登录（DRF Token 或 Session）
-- [ ] 自选股 CRUD
-- [ ] 回测历史保存与列表（落 `Backtest` 表）
-- [ ] 多策略 / 多参数对比视图
-- 验收：登录后保存回测、查看历史、对比结果（体现完整 CRUD）
+- [x] 用户注册 / 登录（DRF Token，`accounts` app）
+- [x] 自选股 CRUD（`WatchItem` 模型 + watchlist 增删查接口）
+- [x] 回测历史保存与列表（`Backtest.user` 可空，匿名仍可回测、登录才存历史）
+- [x] 历史对比视图（前端表格列出各次回测指标）
+- 验收：注册/登录、加自选股、登录态回测落历史、匿名 401 受保护接口 ✅
 
 ### M5 — 量化 Agent（核心亮点）
-- [ ] Agent 服务（`agent/` app）：Claude API + tool use
-- [ ] 工具注册：`get_quote` / `run_backtest` / `list_strategies`
-- [ ] 对话表 + 工具调用记录持久化
-- [ ] Agent API：`POST /api/agent/chat/`（流式可选）
-- [ ] 前端对话面板：自然语言驱动回测，展示解读
-- [ ] API key 放后端 `.env`，绝不进前端
-- 验收：「用双均线回测茅台近三年，5日20日均线」→ Agent 自动解析参数、调回测工具、自然语言解读收益与风险
+- [x] Agent 服务（`agent/` app）：Claude API + tool use 手动循环（循环至 end_turn）
+- [x] 工具注册：`get_quote` / `run_backtest` / `list_strategies`（`agent/tools.py`）
+- [x] 对话表 + 工具调用记录持久化（`Conversation` / `Message.trace`）
+- [x] Agent API：`POST /api/agent/chat/`（多轮上下文 + 匿名可用）
+- [x] 前端对话面板：自然语言驱动回测，可展开查看工具调用 trace
+- [x] API key 放后端 `.env`（`ANTHROPIC_API_KEY/BASE_URL/MODEL`），绝不进前端
+- [x] prompt caching：system + 工具定义各打断点（前缀短可能静默不命中，待 prompt 变长生效）
+- 验收：工具层已实测（茅台回测返回真实指标）；Claude→tool→Claude 全链路待填 key 后实测 ⏳
 
 ## 论文章节（建议）
 

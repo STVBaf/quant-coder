@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from market.services import fetch_daily_bars, get_or_create_stock
@@ -47,6 +48,7 @@ def run(request):
         kind=kind, name=dict(Strategy.KINDS)[kind], defaults={"params": params}
     )
     Backtest.objects.create(
+        user=request.user if request.user.is_authenticated else None,
         strategy=strategy,
         stock=stock,
         start=start,
@@ -56,3 +58,26 @@ def run(request):
     )
 
     return Response({"stock": {"code": stock.code, "name": stock.name}, **result})
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def history(request):
+    """The logged-in user's saved backtests, newest first."""
+    runs = request.user.backtests.select_related("strategy", "stock")
+    return Response(
+        [
+            {
+                "id": r.id,
+                "code": r.stock.code,
+                "name": r.stock.name,
+                "strategy": r.strategy.name,
+                "kind": r.strategy.kind,
+                "start": r.start,
+                "end": r.end,
+                "metrics": r.metrics,
+                "created_at": r.created_at,
+            }
+            for r in runs
+        ]
+    )

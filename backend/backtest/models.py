@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 from market.models import Stock
@@ -23,6 +24,9 @@ class Strategy(models.Model):
 class Backtest(models.Model):
     """A single backtest run and its results."""
 
+    user = models.ForeignKey(
+        User, related_name="backtests", null=True, blank=True, on_delete=models.CASCADE
+    )
     strategy = models.ForeignKey(Strategy, related_name="runs", on_delete=models.CASCADE)
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
     start = models.DateField()
@@ -30,6 +34,9 @@ class Backtest(models.Model):
     metrics = models.JSONField(default=dict)  # return, max_drawdown, sharpe, win_rate
     equity_curve = models.JSONField(default=list)  # [[date, value], ...]
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
 
     def __str__(self):
         return f"{self.strategy.name} on {self.stock.code}"
